@@ -55,7 +55,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="FactoryUI.cs" />
+    <Compile Include="Detail.cs" />
+    <Compile Include="Factory.cs" />
+    <Compile Include="TechnoLine.cs" />
+    <Compile Include="TechnoLineUse.cs" />
+    <Compile Include="TimeWork.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -64,8 +68,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DetailUI.cs" />
-    <Compile Include="MachineUI.cs" />
+    <Compile Include="Machine.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

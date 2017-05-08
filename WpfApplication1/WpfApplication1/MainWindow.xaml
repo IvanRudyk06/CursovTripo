@@ -5,11 +5,41 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApplication1"
         mc:Ignorable="d"
-        Title="MainWindow" Height="586" Width="1077" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" Height="524" Width="1077" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
     <Grid>
-        <Grid HorizontalAlignment="Left" Height="555" VerticalAlignment="Top" Width="1069">
-            <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="922,10,0,0" VerticalAlignment="Top" Width="122" Height="40" Click="button_Click"/>
-            <Canvas x:Name="canvas" HorizontalAlignment="Left" Height="340" Margin="10,55,0,0" VerticalAlignment="Top" Width="640" Background="#FFF0F0F0" OpacityMask="White"/>
+        <Grid HorizontalAlignment="Left" Height="483" VerticalAlignment="Top" Width="1059">
+            <Canvas x:Name="canvas" HorizontalAlignment="Left" Height="340" Margin="10,133,0,0" VerticalAlignment="Top" Width="640" OpacityMask="White">
+                <Canvas.Background>
+                    <SolidColorBrush Color="#FFCDC8C8"/>
+                </Canvas.Background>
+            </Canvas>
+            <Button x:Name="button" Content="Змоделювати процес" HorizontalAlignment="Left" Margin="190,91,0,0" VerticalAlignment="Top" Width="234" Click="button_Click_1" Height="37"/>
+            <Button x:Name="button1" Content="Відмінити" HorizontalAlignment="Left" Margin="429,91,0,0" VerticalAlignment="Top" Width="221" Height="37" Click="button1_Click"/>
+            <TextBox x:Name="tbResults" HorizontalAlignment="Left" Height="463" Margin="673,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="376" VerticalScrollBarVisibility="Auto"/>
+            <Label x:Name="label" Content="Час роботи заводу год." HorizontalAlignment="Left" Margin="10,25,0,0" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbTimeWorkFactory" HorizontalAlignment="Left" Height="23" Margin="10,51,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="156" Text="8" CharacterCasing="Lower" />
+            <Rectangle Fill="White" HorizontalAlignment="Left" Height="60" Margin="190,26,0,0" Stroke="Black" VerticalAlignment="Top" Width="460" OpacityMask="Black"/>
+            <Label x:Name="label_Copy" Content="Час обробки на кожному з видів станків" HorizontalAlignment="Left" Margin="299,0,0,0" VerticalAlignment="Top"/>
+            <Label x:Name="label_Copy1" Content="Станок 1 (хв.)" HorizontalAlignment="Left" Margin="199,25,0,0" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbMachine1" HorizontalAlignment="Left" Height="23" Margin="199,51,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="30" Text="12" CharacterCasing="Lower"/>
+            <Label x:Name="label_Copy2" Content="Станок 2 (хв.)." HorizontalAlignment="Left" Margin="309,25,0,0" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbMachine2" HorizontalAlignment="Left" Height="23" Margin="309,51,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="27" Text="13" CharacterCasing="Lower"/>
+            <Label x:Name="label_Copy3" Content="Станок 3 (хв.)" HorizontalAlignment="Left" Margin="419,26,0,0" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbMachine3" HorizontalAlignment="Left" Height="23" Margin="419,52,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="27" Text="7" CharacterCasing="Lower"/>
+            <Label x:Name="label_Copy4" Content="Станок 4 (хв.)" HorizontalAlignment="Left" Margin="533,26,0,0" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbMachine4" HorizontalAlignment="Left" Height="23" Margin="533,52,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="25" Text="8" CharacterCasing="Lower"/>
+            <Label x:Name="label_Copy5" Content="Інтервал генерації деталей хв." HorizontalAlignment="Left" Margin="10,79,0,0" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbIntervalGenerate" HorizontalAlignment="Left" Height="23" Margin="10,105,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="74" Text="10" CharacterCasing="Lower"/>
+            <Label x:Name="label1" Content="+/-" HorizontalAlignment="Left" Margin="84,101,0,0" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbIntervalGenerate1Dev" HorizontalAlignment="Left" Height="23" Margin="117,105,0,0" TextWrapping="Wrap" Text="2" VerticalAlignment="Top" Width="49" CharacterCasing="Lower"/>
+            <Label x:Name="label1_Copy" Content="+/-" HorizontalAlignment="Left" Margin="229,48,0,0" VerticalAlignment="Top" Width="28"/>
+            <TextBox x:Name="tbMachine1Dev" HorizontalAlignment="Left" Height="23" Margin="257,51,0,0" TextWrapping="Wrap" Text="2" VerticalAlignment="Top" Width="25" CharacterCasing="Lower"/>
+            <Label x:Name="label1_Copy1" Content="+/-" HorizontalAlignment="Left" Margin="336,48,0,0" VerticalAlignment="Top" Width="29"/>
+            <TextBox x:Name="tbMachine2Dev" HorizontalAlignment="Left" Height="23" Margin="365,51,0,0" TextWrapping="Wrap" Text="2" VerticalAlignment="Top" Width="25" CharacterCasing="Lower"/>
+            <Label x:Name="label1_Copy2" Content="+/-" HorizontalAlignment="Left" Margin="448,49,0,0" VerticalAlignment="Top" Width="29"/>
+            <TextBox x:Name="tbMachine3Dev" HorizontalAlignment="Left" Height="23" Margin="477,52,0,0" TextWrapping="Wrap" Text="2" VerticalAlignment="Top" Width="25" CharacterCasing="Lower"/>
+            <Label x:Name="label1_Copy3" Content="+/-" HorizontalAlignment="Left" Margin="562,49,0,0" VerticalAlignment="Top" Width="29"/>
+            <TextBox x:Name="tbMachine4Dev" HorizontalAlignment="Left" Height="23" Margin="591,52,0,0" TextWrapping="Wrap" Text="2" VerticalAlignment="Top" Width="25" CharacterCasing="Lower"/>
         </Grid>
 
     </Grid>

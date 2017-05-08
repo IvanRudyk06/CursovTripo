@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace ConsoleApplication1
 {
-    class Detail
+    class Detaile
     {
         public int IdDetail { get; }
 
-        public Detail(int idDetail)
+        public Detaile(int idDetail)
         {
             IdDetail = idDetail;
         }
