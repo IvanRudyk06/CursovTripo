@@ -17,21 +17,26 @@ namespace WpfApplication1
         public SolidColorBrush Color { get; set; }
 
         //---------------------------------------------------------------
+
+        public double UtilizationMachine { get; set; }
+
         private Mutex mutex = new Mutex();
         public int NumberMachine { get; }
         public int NumberLine { get; }
         public int Queue { get; set; }
-        public int CountDoneDetail { get; set; }
         public int MaxSizeQueue { get; set; }
         public int SumTimeWork { get; set; }
 
-        private Random randomTimeWork = new Random();
+        public int SumDetail { get; set; }
+
+        private Random randomTimeWork; /*= new Random();*/
 
         private TimeWork timeWork;
         //---------------------------------------------------------------
 
-        public Machine(int x, int y, TimeWork timeWork, int numberMachine, int numberLine)
+        public Machine(int x, int y, TimeWork timeWork, int numberMachine, int numberLine, Random rand)
         {
+            randomTimeWork = rand;
             this.timeWork = timeWork;
             X = x;
             Y = y;
@@ -40,10 +45,10 @@ namespace WpfApplication1
             NumberLine = numberLine;
             NumberMachine = numberMachine;
             Queue = 0;
-            CountDoneDetail = 0;
             MaxSizeQueue = 0;
             if(numberMachine != 0)
             SumTimeWork = 0;
+            SumDetail = 0;
         }
 
         public void addDetail(Detail detail)
@@ -51,8 +56,7 @@ namespace WpfApplication1
             if (timeWork.TimeActual <= timeWork.TimeScheduledMiliSecond)
             {
                 Queue++;
-                Console.WriteLine("Деталь № " + detail.IdDetail + " зайшла у чергу станок № " + NumberMachine + "Лінія № " + NumberLine);
-                MainWindow.ListResults.Add("Деталь № " + detail.IdDetail + " зайшла у чергу станок № " + NumberMachine + "Лінія № " + NumberLine);
+                MainWindow.ListResults.Add("Деталь № " + detail.IdDetail + " зайшла у чергу станок № " + NumberMachine + " Лінія № " + NumberLine);
                 if (MaxSizeQueue < Queue)
                 {
                     MaxSizeQueue = Queue;
@@ -70,12 +74,12 @@ namespace WpfApplication1
                 Queue--;
                 int timeWorkDetaleMilisecond = randomTimeWork.Next(div*2) - div + timeWork.TimeWorkOnTypeMachine[0, NumberMachine-1];
                 SumTimeWork += timeWorkDetaleMilisecond;
+                Console.WriteLine(SumTimeWork);
+                SumDetail += 1;
                 Color = Brushes.Green;
-                Console.WriteLine("Деталь № " + detail.IdDetail + " зайшла на станок № " + NumberMachine + "Лінія № " + NumberLine);
-                MainWindow.ListResults.Add("Деталь № " + detail.IdDetail + " зайшла на станок № " + NumberMachine + "Лінія № " + NumberLine);
+                MainWindow.ListResults.Add("Деталь № " + detail.IdDetail + " зайшла на станок № " + NumberMachine + " Лінія № " + NumberLine);
                 Thread.Sleep(new TimeSpan(0, 0, 0, 0, timeWorkDetaleMilisecond));
-                Console.WriteLine("Деталь № " + detail.IdDetail + " вийшла зі станка № " + NumberMachine + "Лінія № " + NumberLine);
-                MainWindow.ListResults.Add("Деталь № " + detail.IdDetail + " вийшла зі станка № " + NumberMachine + "Лінія № " + NumberLine);
+                MainWindow.ListResults.Add("Деталь № " + detail.IdDetail + " вийшла зі станка № " + NumberMachine + " Лінія № " + NumberLine);
                 Color = Brushes.Gray;
                 mutex.ReleaseMutex();
             }
@@ -84,9 +88,9 @@ namespace WpfApplication1
 
         public double getAvarageTimeWork()
         {
-            if (CountDoneDetail != 0)
+            if (SumDetail != 0)
             {
-                return SumTimeWork / CountDoneDetail;
+                return ((int)SumTimeWork / (SumDetail*10))/100.0;
             }
             else
             {
@@ -97,9 +101,8 @@ namespace WpfApplication1
 
         public override string ToString()
         {
-            Console.WriteLine("      Станок № " + NumberMachine + "  Лінія № " + NumberLine +
-                            "\n          Максимальний розмір черги " + MaxSizeQueue + " Середній час роботи деталі " + getAvarageTimeWork() + " сек.");
-            return "";
+            return("        Станок № " + NumberMachine + " Максимальний розмір черги " + MaxSizeQueue 
+                              + "   Середній час обробки деталі " + getAvarageTimeWork() + " сек.   "+"Коефіцієнт використання : "+UtilizationMachine);  
         }
 
 

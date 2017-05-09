@@ -14,22 +14,24 @@ namespace WpfApplication1
         public int NumberLine { get; }
         public  Machine[] Machines { get; set; }
 
-        public TechnoLine(int[,] kord ,int numberLine, TimeWork timeWork)
+        private Random rand;
+
+        public TechnoLine(int[,] kord ,int numberLine, TimeWork timeWork, Random rand)
         {
+            this.rand = rand;
             this.timeWork = timeWork;
             NumberLine = numberLine;
             Machines = new Machine[4];
-            Machines[0] = new Machine(kord[0,0], kord[1,0], timeWork, 1, NumberLine);
-            Machines[1] = new Machine(kord[0,1], kord[1,1], timeWork, 2, NumberLine);
-            Machines[2] = new Machine(kord[0,2], kord[1,2], timeWork, 3, NumberLine);
-            Machines[3] = new Machine(kord[0,3], kord[1,3], timeWork, 4, NumberLine);
+            Machines[0] = new Machine(kord[0,0], kord[1,0], timeWork, 1, NumberLine, rand);
+            Machines[1] = new Machine(kord[0,1], kord[1,1], timeWork, 2, NumberLine, rand);
+            Machines[2] = new Machine(kord[0,2], kord[1,2], timeWork, 3, NumberLine, rand);
+            Machines[3] = new Machine(kord[0,3], kord[1,3], timeWork, 4, NumberLine, rand);
         }
 
         public void addDeteal(Detail detail)
         {
             if (timeWork.TimeActual <= timeWork.TimeScheduledMiliSecond)
             {
-                Console.WriteLine("Деталь № " + detail.IdDetail + " потрапляє у лінію № " + NumberLine);
                 MainWindow.ListResults.Add("Деталь № " + detail.IdDetail + " потрапляє у лінію № " + NumberLine);
                 for (int i = 0; i < Machines.Length; i++)
                 {
@@ -40,11 +42,7 @@ namespace WpfApplication1
 
         public override string ToString()
         {
-            foreach(Machine machine in Machines)
-            {
-                machine.ToString();
-            }
-            return "";
+           return "    Технологічна лінія № "+NumberLine;
         }
     }
 }

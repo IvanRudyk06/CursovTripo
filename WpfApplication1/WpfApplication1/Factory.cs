@@ -18,7 +18,7 @@ namespace WpfApplication1
 
         public MyLine[] helpedLines { get; set; }
 
-        private TimeWork timeWork;
+        public TimeWork TimeWork { get; set; }
 
         //--------------------------------------------------
         private Random randomTime = new Random();
@@ -33,7 +33,7 @@ namespace WpfApplication1
 
         public Factory(TimeWork timeWork)
         {
-            this.timeWork = timeWork;
+            this.TimeWork = timeWork;
             helpedLines = new MyLine[15];
             GenerateEndMachines = new Machine[2];
             MyTechnoLines = new ObservableCollection<TechnoLine>();
@@ -44,6 +44,8 @@ namespace WpfApplication1
             initsializeLine();
             initsializeFactory();
         }
+
+
 
         public void initsializeLine()
         {
@@ -77,11 +79,11 @@ namespace WpfApplication1
                     x += 100;                 
                 }
                 y += 100;
-                MyTechnoLines.Add(new TechnoLine(arr, i+1, timeWork));
+                MyTechnoLines.Add(new TechnoLine(arr, i+1, TimeWork, randomTime));
             }
 
-            GenerateEndMachines[0] = new Machine(50, 150, timeWork, 0, 0);
-            GenerateEndMachines[1] = new Machine(550, 150, timeWork, 0, 0);
+            GenerateEndMachines[0] = new Machine(50, 150, TimeWork, 0, 0, randomTime);
+            GenerateEndMachines[1] = new Machine(550, 150, TimeWork, 0, 0, randomTime);
         }
 
 
@@ -93,11 +95,11 @@ namespace WpfApplication1
 
         private void run()
         {
-            while (timeWork.TimeActual <= timeWork.TimeScheduledMiliSecond)
+            while (TimeWork.TimeActual <= TimeWork.TimeScheduledMiliSecond)
             {
                 Detail detail = new Detail(CountOfGeneratedDetail + 1);
-                int div = timeWork.TimeGenerate[1];
-                int timeWorkDetail = randomTime.Next(div*2) - div + timeWork.TimeGenerate[0];
+                int div = TimeWork.TimeGenerate[1];
+                int timeWorkDetail = randomTime.Next(div*2) - div + TimeWork.TimeGenerate[0];
                 Thread thread = new Thread(new ParameterizedThreadStart(addDetail));
                 thread.Start(detail);
                 Thread.Sleep(new TimeSpan(0, 0, 0, 0, timeWorkDetail));
@@ -107,16 +109,14 @@ namespace WpfApplication1
 
         public void addDetail(object detail)
         {
-            if (timeWork.TimeActual <= timeWork.TimeScheduledMiliSecond)
+            if (TimeWork.TimeActual <= TimeWork.TimeScheduledMiliSecond)
             {
-                Console.WriteLine("Згенеровано деталь № " + ((Detail)detail).IdDetail);
-                MainWindow.ListResults.Add("Згенеровано деталь № " + ((Detail)detail).IdDetail);
+                MainWindow.ListResults.Add("   Згенеровано деталь № " + ((Detail)detail).IdDetail);
                 generateEndDetaleBlink(GenerateEndMachines[0]);
                 CountOfGeneratedDetail++;
                 sellectLineForAdd((Detail)detail);
+                MainWindow.ListResults.Add("   Виготовлено деталь № " + ((Detail)detail).IdDetail);
                 CountOfDoneDetail++;
-                Console.WriteLine("Виготовлено деталь № " + ((Detail)detail).IdDetail);
-                MainWindow.ListResults.Add("Виготовлено деталь № " + ((Detail)detail).IdDetail);
                 generateEndDetaleBlink(GenerateEndMachines[1]);
             }
         }
@@ -136,20 +136,26 @@ namespace WpfApplication1
 
         private void sellectLineForAdd(Detail detail)
         {
-            List<TechnoLineUse> technoLinesUse = new List<TechnoLineUse>();
-            technoLinesUse.Add(new TechnoLineUse(0, getSumSizeQueue(MyTechnoLines[0].Machines)));
-            technoLinesUse.Add(new TechnoLineUse(1, getSumSizeQueue(MyTechnoLines[1].Machines)));
-            technoLinesUse.Add(new TechnoLineUse(2, getSumSizeQueue(MyTechnoLines[2].Machines)));
-            technoLinesUse.Sort();
-            MyTechnoLines[technoLinesUse[0].NumberLine].addDeteal(detail);
+            int index = 0;
+            int sum = Int32.MaxValue;
+            for(int i = 0; i<MyTechnoLines.Count; i++)
+            {
+                int sumTemp = getSumTimeWorkLine(MyTechnoLines[i]);
+                if (sumTemp < sum)
+                {
+                    index = i;
+                    sum = sumTemp;
+                }
+            }
+            MyTechnoLines[index].addDeteal(detail);
         }
 
-        private int getSumSizeQueue(Machine[] Machines)
+        private int getSumTimeWorkLine(TechnoLine technoLine)
         {
             int sum = 0;
-            for(int i = 0; i<Machines.Length; i++)
+            for(int i = 0; i< technoLine.Machines.Length; i++)
             {
-                sum += Machines[i].SumTimeWork;
+                sum += technoLine.Machines[i].SumTimeWork;
             }
             return sum;
         }

@@ -100,12 +100,13 @@ namespace WpfApplication1
                 drawRectangle(0, 0, 340, 640, Colors.White);
                 drawFactory();
                 refreshResults();
-                timeWork.TimeActual += 10;
-                Thread.Sleep(new TimeSpan(0, 0, 0, 0, 10));
+                timeWork.TimeActual += 100;
+                Thread.Sleep(new TimeSpan(0, 0, 0, 1));
             }
             else
             {
-                MessageBox.Show("result");
+                ResultsWorkFactory resultWorkWindow = new ResultsWorkFactory(factory);
+                resultWorkWindow.ShowDialog();
                 timeWork.TimeActual += timeWork.TimeScheduledMiliSecond;
                 dispatcherTimer.Stop();
                 button.IsEnabled = true;
@@ -156,7 +157,7 @@ namespace WpfApplication1
         {
             tbResults.Clear();
             button.IsEnabled = false;
-            timeWork = new TimeWork(((int)timeScheduled*6000), timeGenerate, timeWorkOnTypeMachine);
+            timeWork = new TimeWork((int)(timeScheduled*6000), timeGenerate, timeWorkOnTypeMachine);
             timeWork.TimeActual = 0;
             dispatcherTimer.Stop();
             dispatcherTimer.Start();
