@@ -18,7 +18,7 @@ namespace WpfApplication1
 
         //---------------------------------------------------------------
 
-        public double UtilizationMachine { get; set; }
+        
 
         private Mutex mutex = new Mutex();
         public int NumberMachine { get; }
@@ -27,15 +27,21 @@ namespace WpfApplication1
         public int MaxSizeQueue { get; set; }
         public int SumTimeWork { get; set; }
 
+        public int TimeQueue;
+
         public int SumDetail { get; set; }
 
-        private Random randomTimeWork; /*= new Random();*/
+        private Random randomTimeWork; 
 
         private TimeWork timeWork;
+
+        public bool MayWork { get; set; }
         //---------------------------------------------------------------
 
         public Machine(int x, int y, TimeWork timeWork, int numberMachine, int numberLine, Random rand)
         {
+            MayWork = true;
+            TimeQueue = 0;
             randomTimeWork = rand;
             this.timeWork = timeWork;
             X = x;
@@ -51,23 +57,26 @@ namespace WpfApplication1
             SumDetail = 0;
         }
 
+       
+
         public void addDetail(Detail detail)
         {
-            if (timeWork.TimeActual <= timeWork.TimeScheduledMiliSecond)
+            if (MayWork)
             {
                 Queue++;
-                MainWindow.ListResults.Add("Деталь № " + detail.IdDetail + " зайшла у чергу станок № " + NumberMachine + " Лінія № " + NumberLine);
+                MainWindow.ListResults.Add("Деталь №"+detail.IdDetail+" зайшла у чергу станок № " + NumberMachine + " Лінія № " + NumberLine);
                 if (MaxSizeQueue < Queue)
                 {
                     MaxSizeQueue = Queue;
                 }
                 workDetail(detail);
             }
+            
         }
 
         private void workDetail(Detail detail)
         {
-            if (timeWork.TimeActual <= timeWork.TimeScheduledMiliSecond)
+            if (MayWork)
             {
                 int div = timeWork.TimeWorkOnTypeMachine[1, NumberMachine - 1];
                 mutex.WaitOne();
@@ -77,13 +86,12 @@ namespace WpfApplication1
                 Console.WriteLine(SumTimeWork);
                 SumDetail += 1;
                 Color = Brushes.Green;
-                MainWindow.ListResults.Add("Деталь № " + detail.IdDetail + " зайшла на станок № " + NumberMachine + " Лінія № " + NumberLine);
+                MainWindow.ListResults.Add("Деталь №" + detail.IdDetail + " зайшла на станок № " + NumberMachine + " Лінія № " + NumberLine);
                 Thread.Sleep(new TimeSpan(0, 0, 0, 0, timeWorkDetaleMilisecond));
-                MainWindow.ListResults.Add("Деталь № " + detail.IdDetail + " вийшла зі станка № " + NumberMachine + " Лінія № " + NumberLine);
+                MainWindow.ListResults.Add("Деталь №" + detail.IdDetail + " вийшла зі станка № " + NumberMachine + " Лінія № " + NumberLine);
                 Color = Brushes.Gray;
                 mutex.ReleaseMutex();
             }
-                
         }
 
         public double getAvarageTimeWork()
@@ -99,10 +107,16 @@ namespace WpfApplication1
 
         }
 
+        public double getUtilizationMachine()
+        {
+            return SumTimeWork / (timeWork.TimeScheduledMiliSecond * 50.0);
+        }
+
         public override string ToString()
         {
-            return("        Станок № " + NumberMachine + " Максимальний розмір черги " + MaxSizeQueue 
-                              + "   Середній час обробки деталі " + getAvarageTimeWork() + " сек.   "+"Коефіцієнт використання : "+UtilizationMachine);  
+            return("        Станок № " + NumberMachine + " Максимальний розмір черги " + MaxSizeQueue
+                              + "   Середній час обробки деталі " + getAvarageTimeWork() + " сек.   " + " Коефіцієнт використання : "
+                               + getUtilizationMachine()+" Середній час перебування деталей у черзі : " + TimeQueue/100.0 + "хв.");
         }
 
 

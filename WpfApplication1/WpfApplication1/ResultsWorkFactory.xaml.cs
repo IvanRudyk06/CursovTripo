@@ -26,7 +26,6 @@ namespace WpfApplication1
             listResults = new List<String>();
             FactoryResult = factory;
             InitializeComponent();
-            setUtilization();
             writeResults();
         }
 
@@ -35,23 +34,23 @@ namespace WpfApplication1
 
         }
 
-        public void setUtilization()
-        {
-            for(int i = 0; i<FactoryResult.MyTechnoLines.Count; i++)
-            {
-                for(int j = 0; j< FactoryResult.MyTechnoLines[i].Machines.Length; j++)
-                {
-                    FactoryResult.MyTechnoLines[i].Machines[j].UtilizationMachine = ((int)FactoryResult.MyTechnoLines[i].Machines[j].SumTimeWork
-                        / (FactoryResult.TimeWork.TimeScheduledMiliSecond/10))/100.0;
-                }
-            }
-        }
+        //public void setUtilization()
+        //{
+        //    for(int i = 0; i<FactoryResult.MyTechnoLines.Count; i++)
+        //    {
+        //        for(int j = 0; j< FactoryResult.MyTechnoLines[i].Machines.Length; j++)
+        //        {
+        //            FactoryResult.MyTechnoLines[i].Machines[j].UtilizationMachine = ((int)FactoryResult.MyTechnoLines[i].Machines[j].SumTimeWork
+        //                / (FactoryResult.TimeWork.TimeScheduledMiliSecond/10))/100.0;
+        //        }
+        //    }
+        //}
 
         public void writeResults()
         {
             listResults.Add("         Підприємство з виготовлення Мікросхем");
             listResults.Add("" + Environment.NewLine);
-            listResults.Add("Час роботи : " + FactoryResult.TimeWork.TimeScheduledMiliSecond/ 6000.0+ " год.    Згенеровано мікросхем : "+
+            listResults.Add("Час роботи : " + FactoryResult.TimeWork.TimeScheduledMiliSecond/ 1000.0+ " год.    Згенеровано мікросхем : "+
                               FactoryResult.CountOfGeneratedDetail+ "    Виготовлено мікросхем : "+ FactoryResult.CountOfDoneDetail);
             foreach(TechnoLine tl in FactoryResult.MyTechnoLines)
             {

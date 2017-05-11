@@ -16,8 +16,11 @@ namespace WpfApplication1
 
         private Random rand;
 
+        public bool MayWork { get; set; }
+
         public TechnoLine(int[,] kord ,int numberLine, TimeWork timeWork, Random rand)
         {
+            MayWork = true;
             this.rand = rand;
             this.timeWork = timeWork;
             NumberLine = numberLine;
@@ -30,13 +33,17 @@ namespace WpfApplication1
 
         public void addDeteal(Detail detail)
         {
-            if (timeWork.TimeActual <= timeWork.TimeScheduledMiliSecond)
+            if (MayWork)
             {
-                MainWindow.ListResults.Add("Деталь № " + detail.IdDetail + " потрапляє у лінію № " + NumberLine);
+                MainWindow.ListResults.Add("Деталь №" + detail.IdDetail + " потрапляє у лінію № " + NumberLine);
                 for (int i = 0; i < Machines.Length; i++)
                 {
                     Machines[i].addDetail(detail);
                 }
+            }
+            else
+            {
+                Console.WriteLine("Зупинено лінія");
             }
         }
 

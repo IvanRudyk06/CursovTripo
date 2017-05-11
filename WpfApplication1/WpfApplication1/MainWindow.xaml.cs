@@ -20,17 +20,22 @@ namespace WpfApplication1
 {
     public partial class MainWindow : Window
     {
+        public Rectangle rect;
+
+        public Line line;
+
         public Factory factory { get; set; }
-        private DispatcherTimer dispatcherTimer = new DispatcherTimer();
-        TimeWork timeWork = new TimeWork(0, new int[0], new int[0,0]);
+
+        private TimeWork timeWork = new TimeWork(0, new int[0], new int[0,0]);
 
         public static ObservableCollection<String> ListResults { get; set; }
+
 
         public MainWindow()
         {
             factory = new Factory(timeWork);
             InitializeComponent();
-            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
+           // dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
             drawFactory();
             ListResults = new ObservableCollection<String>();
         }
@@ -47,7 +52,7 @@ namespace WpfApplication1
         {
             for(int i = 0; i<15; i++)
             {
-                Line line = new Line();
+                line = new Line();
                 line.X1 = factory.helpedLines[i].X1;
                 line.X2 = factory.helpedLines[i].X2;
                 line.Y1 = factory.helpedLines[i].Y1;
@@ -84,38 +89,11 @@ namespace WpfApplication1
                 }
             }
         }
-
-    
-
-        private void dispatcherTimer_Tick(object sender, EventArgs e)
-        {
-            if (timeWork.TimeScheduledMiliSecond == 0)
-            {
-                drawRectangle(0, 0, 340, 640, Colors.White);
-                drawFactory();
-                Thread.Sleep(100);
-            }
-            else if(timeWork.TimeActual <= timeWork.TimeScheduledMiliSecond)
-            {
-                drawRectangle(0, 0, 340, 640, Colors.White);
-                drawFactory();
-                refreshResults();
-                timeWork.TimeActual += 100;
-                Thread.Sleep(new TimeSpan(0, 0, 0, 1));
-            }
-            else
-            {
-                ResultsWorkFactory resultWorkWindow = new ResultsWorkFactory(factory);
-                resultWorkWindow.ShowDialog();
-                timeWork.TimeActual += timeWork.TimeScheduledMiliSecond;
-                dispatcherTimer.Stop();
-                button.IsEnabled = true;
-            }
-        }
+   
 
         public void drawRectangle(int x, int y, int hight, int width, Color color)
         {
-            Rectangle rect = new Rectangle();
+            rect = new Rectangle();
             rect.Stroke = new SolidColorBrush(Colors.Black);
             rect.Fill = new SolidColorBrush(color);
             rect.Height = hight;
@@ -127,6 +105,7 @@ namespace WpfApplication1
 
         private void button_Click_1(object sender, RoutedEventArgs e)
         {
+
             double timeScheduled = 0;
             int []  timeGenerate = new int[2];
             int[,] timeWorkOnTypeMachine = new int[2,4];
@@ -146,6 +125,7 @@ namespace WpfApplication1
                 timeWorkOnTypeMachine[1, 3] = Convert.ToInt16(tbMachine4Dev.Text) * 1000;
 
                 initsialize(timeScheduled,  timeGenerate, timeWorkOnTypeMachine);
+                UpdateUI();
             }
             catch 
             {
@@ -157,10 +137,9 @@ namespace WpfApplication1
         {
             tbResults.Clear();
             button.IsEnabled = false;
-            timeWork = new TimeWork((int)(timeScheduled*6000), timeGenerate, timeWorkOnTypeMachine);
+            timeWork = new TimeWork((int)(timeScheduled*1000), timeGenerate, timeWorkOnTypeMachine);
             timeWork.TimeActual = 0;
-            dispatcherTimer.Stop();
-            dispatcherTimer.Start();
+            
             factory = new Factory(timeWork);
             factory.startWork();
             ListResults.Clear();
@@ -187,6 +166,51 @@ namespace WpfApplication1
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             timeWork.TimeActual += timeWork.TimeScheduledMiliSecond;
+        }
+
+
+        public void UpdateUI()
+        {
+            timeWork.TimeActual = 0;
+            new Thread(UpdateTick).Start();
+        }
+
+        public void UpdateTick()
+        {
+            try
+            {
+                while (timeWork.TimeActual < timeWork.TimeScheduledMiliSecond)
+                {
+
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        showResults();
+                    });
+                    Thread.Sleep(1000);
+                }
+                this.Dispatcher.Invoke(() =>
+                {
+                    update();
+                });
+            }
+            catch { }
+            
+        }
+
+        public void update()
+        {
+            ResultsWorkFactory resultWorkWindow = new ResultsWorkFactory(factory);
+            resultWorkWindow.ShowDialog();
+            timeWork.TimeActual += timeWork.TimeScheduledMiliSecond;
+            button.IsEnabled = true;
+        }
+
+        public void showResults()
+        {
+            drawRectangle(0, 0, 340, 640, Colors.White);
+            drawFactory();
+            refreshResults();
+            timeWork.TimeActual += 20;
         }
     }
 }

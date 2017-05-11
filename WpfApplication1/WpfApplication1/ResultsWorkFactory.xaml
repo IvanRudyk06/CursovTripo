@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApplication1"
         mc:Ignorable="d"
-        Title="ResultsWorkFactory" Height="513" Width="637" WindowStartupLocation="CenterScreen">
+        Title="ResultsWorkFactory" Height="513" Width="637" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Grid>
         <Grid HorizontalAlignment="Left" Height="462" Margin="10,10,0,0" VerticalAlignment="Top" Width="609">
             <Button x:Name="button" Content="Close" HorizontalAlignment="Left" Margin="427,426,0,0" VerticalAlignment="Top" Width="172" Click="button_Click" Height="26"/>

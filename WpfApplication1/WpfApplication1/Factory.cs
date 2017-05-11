@@ -29,6 +29,8 @@ namespace WpfApplication1
 
         public ObservableCollection<TechnoLine> MyTechnoLines { get; set; }
 
+        public bool MayWork { get; set; }
+
         //--------------------------------------------------
 
         public Factory(TimeWork timeWork)
@@ -43,6 +45,7 @@ namespace WpfApplication1
             CountOfGeneratedDetail = 0;
             initsializeLine();
             initsializeFactory();
+            MayWork = true;
         }
 
 
@@ -84,6 +87,7 @@ namespace WpfApplication1
 
             GenerateEndMachines[0] = new Machine(50, 150, TimeWork, 0, 0, randomTime);
             GenerateEndMachines[1] = new Machine(550, 150, TimeWork, 0, 0, randomTime);
+            controleQueue();
         }
 
 
@@ -95,27 +99,27 @@ namespace WpfApplication1
 
         private void run()
         {
-            while (TimeWork.TimeActual <= TimeWork.TimeScheduledMiliSecond)
+            while (MayWork)
             {
-                Detail detail = new Detail(CountOfGeneratedDetail + 1);
                 int div = TimeWork.TimeGenerate[1];
                 int timeWorkDetail = randomTime.Next(div*2) - div + TimeWork.TimeGenerate[0];
-                Thread thread = new Thread(new ParameterizedThreadStart(addDetail));
-                thread.Start(detail);
+                Thread thread = new Thread(new ThreadStart(addDetail));
+                thread.Start();
                 Thread.Sleep(new TimeSpan(0, 0, 0, 0, timeWorkDetail));
             }
             this.ToString();
         }
 
-        public void addDetail(object detail)
+        public void addDetail()
         {
-            if (TimeWork.TimeActual <= TimeWork.TimeScheduledMiliSecond)
+            if (MayWork)
             {
-                MainWindow.ListResults.Add("   Згенеровано деталь № " + ((Detail)detail).IdDetail);
+                MainWindow.ListResults.Add("   Згенеровано деталь "+ (CountOfGeneratedDetail+1));
+                Detail detail = new Detail(CountOfGeneratedDetail + 1);
                 generateEndDetaleBlink(GenerateEndMachines[0]);
                 CountOfGeneratedDetail++;
-                sellectLineForAdd((Detail)detail);
-                MainWindow.ListResults.Add("   Виготовлено деталь № " + ((Detail)detail).IdDetail);
+                sellectLineForAdd(detail);
+                MainWindow.ListResults.Add("   Виготовлено деталь №" + detail.IdDetail);
                 CountOfDoneDetail++;
                 generateEndDetaleBlink(GenerateEndMachines[1]);
             }
@@ -162,15 +166,48 @@ namespace WpfApplication1
 
         public override string ToString()
         {
-            Console.WriteLine("================================================");
-            Console.WriteLine("    Інформація про завод :");
-            Console.WriteLine("  Згенеровано деталей : " + CountOfGeneratedDetail);
-            Console.WriteLine("  Виготовлено деталей : " + CountOfDoneDetail);
+                Console.WriteLine("================================================");
+                Console.WriteLine("    Інформація про завод :");
+                Console.WriteLine("  Згенеровано деталей : " + CountOfGeneratedDetail);
+                Console.WriteLine("  Виготовлено деталей : " + CountOfDoneDetail);
+                foreach (TechnoLine tl in MyTechnoLines)
+                {
+                    tl.ToString();
+                }
+            return "";
+        }
+
+        private void controleQueue()
+        {
+                Thread thread = new Thread(new ThreadStart(controleQueueInOneMoment));
+                thread.Start();
+        }
+
+        private void controleQueueInOneMoment()
+        {
+            while (TimeWork.TimeActual < TimeWork.TimeScheduledMiliSecond)
+            {
+                for (int i = 0; i < MyTechnoLines.Count; i++)
+                {
+                    for (int j = 0; j < MyTechnoLines[i].Machines.Length; j++)
+                    {
+                        MyTechnoLines[i].Machines[j].TimeQueue += MyTechnoLines[i].Machines[j].Queue * 100;
+                        Thread.Sleep(100);
+                    }
+                }
+
+
+            }
+            MayWork = false;
             foreach (TechnoLine tl in MyTechnoLines)
             {
-                tl.ToString();
+                foreach (Machine machine in tl.Machines)
+                {
+                    machine.MayWork = false;
+                }
+                tl.MayWork = false;
             }
-            return "";
+            
         }
     }
 }
