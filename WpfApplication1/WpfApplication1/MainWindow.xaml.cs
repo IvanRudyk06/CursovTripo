@@ -1,20 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Windows.Threading;
 
 namespace WpfApplication1
 {
@@ -38,6 +28,12 @@ namespace WpfApplication1
            // dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
             drawFactory();
             ListResults = new ObservableCollection<String>();
+
+            factory.eventRefresh += showResults;
+            for (int i = 0; i < factory.MyTechnoLines.Count; i++)
+            {
+                factory.MyTechnoLines[i].eventRefresh += showResults;
+            }
         }
 
 
@@ -105,7 +101,6 @@ namespace WpfApplication1
 
         private void button_Click_1(object sender, RoutedEventArgs e)
         {
-
             double timeScheduled = 0;
             int []  timeGenerate = new int[2];
             int[,] timeWorkOnTypeMachine = new int[2,4];
@@ -143,6 +138,28 @@ namespace WpfApplication1
             factory = new Factory(timeWork);
             factory.startWork();
             ListResults.Clear();
+
+
+            factory.eventRefresh += refreshEventMethod;
+            for (int i = 0; i < factory.MyTechnoLines.Count; i++)
+            {
+                factory.MyTechnoLines[i].eventRefresh += refreshEventMethod;
+            }
+        }
+
+        public void refreshEventMethod()
+        {
+            if (factory.MayWork)
+            {
+                try
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        showResults();
+                    });
+                }
+                catch { }
+            }
         }
 
         public void refreshResults()
@@ -161,6 +178,8 @@ namespace WpfApplication1
             factory = new Factory(timeWork);
             button.IsEnabled = true;
             ListResults.Clear();
+
+            
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -181,23 +200,23 @@ namespace WpfApplication1
             {
                 while (timeWork.TimeActual < timeWork.TimeScheduledMiliSecond)
                 {
-
                     this.Dispatcher.Invoke(() =>
                     {
-                        showResults();
+                        timeWork.TimeActual += 20;
                     });
                     Thread.Sleep(1000);
                 }
                 this.Dispatcher.Invoke(() =>
                 {
-                    update();
+                    if(timeWork.TimeScheduledMiliSecond!= 0)
+                    openResultWindow();
                 });
             }
             catch { }
             
         }
 
-        public void update()
+        public void openResultWindow()
         {
             ResultsWorkFactory resultWorkWindow = new ResultsWorkFactory(factory);
             resultWorkWindow.ShowDialog();
@@ -210,7 +229,6 @@ namespace WpfApplication1
             drawRectangle(0, 0, 340, 640, Colors.White);
             drawFactory();
             refreshResults();
-            timeWork.TimeActual += 20;
         }
     }
 }

@@ -11,8 +11,11 @@ using System.Windows.Shapes;
 
 namespace WpfApplication1
 {
-   public class Factory
+    public delegate void FactoryStateHandler();
+
+    public class Factory
     {
+        public event FactoryStateHandler eventRefresh;
 
         public Machine []GenerateEndMachines { get; set; }
 
@@ -103,6 +106,10 @@ namespace WpfApplication1
             {
                 int div = TimeWork.TimeGenerate[1];
                 int timeWorkDetail = randomTime.Next(div*2) - div + TimeWork.TimeGenerate[0];
+                if(timeWorkDetail < 0)
+                {
+                    timeWorkDetail = 0;
+                }
                 Thread thread = new Thread(new ThreadStart(addDetail));
                 thread.Start();
                 Thread.Sleep(new TimeSpan(0, 0, 0, 0, timeWorkDetail));
@@ -114,12 +121,16 @@ namespace WpfApplication1
         {
             if (MayWork)
             {
-                MainWindow.ListResults.Add("   Згенеровано деталь "+ (CountOfGeneratedDetail+1));
+                MainWindow.ListResults.Add("   Згенеровано Мікросхему " + (CountOfGeneratedDetail+1));
+                if(eventRefresh != null)
+                    eventRefresh();
                 Detail detail = new Detail(CountOfGeneratedDetail + 1);
                 generateEndDetaleBlink(GenerateEndMachines[0]);
                 CountOfGeneratedDetail++;
                 sellectLineForAdd(detail);
-                MainWindow.ListResults.Add("   Виготовлено деталь №" + detail.IdDetail);
+                MainWindow.ListResults.Add("   Виготовлено Мікросхему №" + detail.IdDetail);
+                if (eventRefresh != null)
+                    eventRefresh();
                 CountOfDoneDetail++;
                 generateEndDetaleBlink(GenerateEndMachines[1]);
             }
@@ -134,8 +145,12 @@ namespace WpfApplication1
         private void blinkingMachine(object machine)
         {
             ((Machine)machine).Color = Brushes.Red;
+            if (eventRefresh != null)
+                eventRefresh();
             Thread.Sleep(new TimeSpan(0, 0, 0, 1));
             ((Machine)machine).Color = Brushes.Gray;
+            if (eventRefresh != null)
+                eventRefresh();
         }
 
         private void sellectLineForAdd(Detail detail)
@@ -168,8 +183,8 @@ namespace WpfApplication1
         {
                 Console.WriteLine("================================================");
                 Console.WriteLine("    Інформація про завод :");
-                Console.WriteLine("  Згенеровано деталей : " + CountOfGeneratedDetail);
-                Console.WriteLine("  Виготовлено деталей : " + CountOfDoneDetail);
+                Console.WriteLine("  Згенеровано Мікросхем : " + CountOfGeneratedDetail);
+                Console.WriteLine("  Виготовлено Мікросхем : " + CountOfDoneDetail);
                 foreach (TechnoLine tl in MyTechnoLines)
                 {
                     tl.ToString();
@@ -195,8 +210,6 @@ namespace WpfApplication1
                         Thread.Sleep(100);
                     }
                 }
-
-
             }
             MayWork = false;
             foreach (TechnoLine tl in MyTechnoLines)

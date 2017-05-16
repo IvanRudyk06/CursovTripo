@@ -31,20 +31,8 @@ namespace WpfApplication1
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-
+            Close();
         }
-
-        //public void setUtilization()
-        //{
-        //    for(int i = 0; i<FactoryResult.MyTechnoLines.Count; i++)
-        //    {
-        //        for(int j = 0; j< FactoryResult.MyTechnoLines[i].Machines.Length; j++)
-        //        {
-        //            FactoryResult.MyTechnoLines[i].Machines[j].UtilizationMachine = ((int)FactoryResult.MyTechnoLines[i].Machines[j].SumTimeWork
-        //                / (FactoryResult.TimeWork.TimeScheduledMiliSecond/10))/100.0;
-        //        }
-        //    }
-        //}
 
         public void writeResults()
         {

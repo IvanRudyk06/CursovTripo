@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace WpfApplication1
 {
+    public delegate void TecnoLineStateHandler();
     public class TechnoLine 
     {
+        public event TecnoLineStateHandler eventRefresh;
+
         private TimeWork timeWork;
 
         public int NumberLine { get; }
@@ -29,21 +33,33 @@ namespace WpfApplication1
             Machines[1] = new Machine(kord[0,1], kord[1,1], timeWork, 2, NumberLine, rand);
             Machines[2] = new Machine(kord[0,2], kord[1,2], timeWork, 3, NumberLine, rand);
             Machines[3] = new Machine(kord[0,3], kord[1,3], timeWork, 4, NumberLine, rand);
+
+            for(int i = 0; i<4; i++)
+            {
+                Machines[i].eventRefresh += eventExecute;
+            }
+        }
+
+        public void eventExecute()
+        {
+            if (eventRefresh != null)
+                eventRefresh();
         }
 
         public void addDeteal(Detail detail)
         {
             if (MayWork)
             {
-                MainWindow.ListResults.Add("Деталь №" + detail.IdDetail + " потрапляє у лінію № " + NumberLine);
-                for (int i = 0; i < Machines.Length; i++)
-                {
-                    Machines[i].addDetail(detail);
-                }
-            }
-            else
-            {
-                Console.WriteLine("Зупинено лінія");
+                MainWindow.ListResults.Add("Мікросхема №" + detail.IdDetail + " потрапляє у лінію № " + NumberLine);
+                if (eventRefresh != null)
+                    eventRefresh();
+                Machines[0].addDetail(detail);
+                Thread.Sleep(1000+rand.Next(2000));
+                Machines[1].addDetail(detail);
+                Thread.Sleep(rand.Next(2000));
+                Machines[2].addDetail(detail);
+                Thread.Sleep(1000+rand.Next(3000));
+                Machines[3].addDetail(detail);
             }
         }
 
